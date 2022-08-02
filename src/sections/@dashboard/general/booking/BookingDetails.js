@@ -36,6 +36,7 @@ BookingDetails.propTypes = {
 };
 
 export default function BookingDetails({ title, subheader, tableLabels, tableData, ...other }) {
+  console.log('tableData' , tableData);
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />
@@ -46,7 +47,7 @@ export default function BookingDetails({ title, subheader, tableLabels, tableDat
 
             <TableBody>
               {tableData.map((row) => (
-                <BookingDetailsRow key={row.id} row={row} />
+                <BookingDetailsRow key={row._id} row={row} />
               ))}
             </TableBody>
           </Table>
@@ -80,6 +81,7 @@ BookingDetailsRow.propTypes = {
 };
 
 function BookingDetailsRow({ row }) {
+  console.log('row' , row)
   const theme = useTheme();
 
   const isLight = theme.palette.mode === 'light';
@@ -118,29 +120,36 @@ function BookingDetailsRow({ row }) {
     <TableRow>
       <TableCell>
         <Stack direction="row" alignItems="center" spacing={2}>
-          <Avatar alt={row.name} src={row.avatar} />
+          {/* <Avatar alt={row.name} src={row.avatar} /> */}
           <Typography variant="subtitle2">{row.name}</Typography>
         </Stack>
       </TableCell>
+      <TableCell >{row.userName}</TableCell>
+      <TableCell sx={{textAlign: 'center'}} >-</TableCell>
+      <TableCell sx={{textAlign: 'center'}} >-</TableCell>
+      <TableCell sx={{textAlign: 'center'}} >{row.totalFolders}</TableCell>
+      <TableCell sx={{textAlign: 'center'}} >{row.totalFiles}</TableCell>
+      <TableCell sx={{textAlign: 'center'}} >{row.totalProjects}</TableCell>
 
-      <TableCell>{format(new Date(row.checkIn), 'dd MMM yyyy')}</TableCell>
 
-      <TableCell>{format(new Date(row.checkOut), 'dd MMM yyyy')}</TableCell>
+      {/* <TableCell>{format(new Date(row.checkIn), 'dd MMM yyyy')}</TableCell> */}
 
-      <TableCell>
+      {/* <TableCell>{format(new Date(row.checkOut), 'dd MMM yyyy')}</TableCell> */}
+
+      {/* <TableCell>
         <Label
           variant={isLight ? 'ghost' : 'filled'}
           color={(row.status === 'paid' && 'success') || (row.status === 'pending' && 'warning') || 'error'}
         >
           {sentenceCase(row.status)}
         </Label>
-      </TableCell>
+      </TableCell> */}
 
-      <TableCell>{row.phoneNumber}</TableCell>
+      {/* <TableCell>{row.phoneNumber}</TableCell> */}
 
-      <TableCell sx={{ textTransform: 'capitalize' }}>{row.roomType}</TableCell>
+      {/* <TableCell sx={{ textTransform: 'capitalize' }}>{row.roomType}</TableCell> */}
 
-      <TableCell align="right">
+      {/* <TableCell align="right">
         <TableMoreMenu
           open={openMenu}
           onOpen={handleOpenMenu}
@@ -171,7 +180,7 @@ function BookingDetailsRow({ row }) {
             </>
           }
         />
-      </TableCell>
+      </TableCell> */}
     </TableRow>
   );
 }
