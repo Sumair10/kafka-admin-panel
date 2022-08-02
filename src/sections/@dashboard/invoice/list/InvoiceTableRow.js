@@ -27,7 +27,8 @@ InvoiceTableRow.propTypes = {
 export default function InvoiceTableRow({ row, selected, onSelectRow, onViewRow, onEditRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { sent, invoiceNumber, createDate, dueDate, status, invoiceTo, totalPrice } = row;
+  // const { sent, invoiceNumber, createDate, dueDate, status, invoiceTo, totalPrice } = row;
+  const { name  , userName,totalUsers ,  totalFiles, totalFolders , totalProjects} = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -41,29 +42,33 @@ export default function InvoiceTableRow({ row, selected, onSelectRow, onViewRow,
 
   return (
     <TableRow hover selected={selected}>
-      <TableCell padding="checkbox">
+      {/* <TableCell padding="checkbox">
         <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
+      </TableCell> */}
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={invoiceTo.name} color={createAvatar(invoiceTo.name).color} sx={{ mr: 2 }}>
+        {/* <Avatar alt={invoiceTo.name} color={createAvatar(invoiceTo.name).color} sx={{ mr: 2 }}>
           {createAvatar(invoiceTo.name).name}
-        </Avatar>
+        </Avatar> */}
 
         <Stack>
           <Typography variant="subtitle2" noWrap>
-            {invoiceTo.name}
+            {name}
           </Typography>
 
-          <Link noWrap variant="body2" onClick={onViewRow} sx={{ color: 'text.disabled', cursor: 'pointer' }}>
+          {/* <Link noWrap variant="body2" onClick={onViewRow} sx={{ color: 'text.disabled', cursor: 'pointer' }}>
             {`INV-${invoiceNumber}`}
-          </Link>
+          </Link> */}
         </Stack>
       </TableCell>
+      <TableCell align="start">{userName}</TableCell>
+      <TableCell align="start">-</TableCell>
+      <TableCell align="center">{totalUsers}</TableCell>
+      <TableCell align="center">{totalProjects}</TableCell>
+      <TableCell align="center">{totalFolders}</TableCell>
+      <TableCell align="center">{totalFiles}</TableCell>
+{/* 
 
-      <TableCell align="left">{fDate(createDate)}</TableCell>
-
-      <TableCell align="left">{fDate(dueDate)}</TableCell>
 
       <TableCell align="center">{fCurrency(totalPrice)}</TableCell>
 
@@ -126,7 +131,7 @@ export default function InvoiceTableRow({ row, selected, onSelectRow, onViewRow,
             </>
           }
         />
-      </TableCell>
+      </TableCell> */}
     </TableRow>
   );
 }

@@ -1,5 +1,5 @@
+import { useState, useEffect, useRef, useCallback } from 'react';
 import sumBy from 'lodash/sumBy';
-import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // @mui
 import { useTheme } from '@mui/material/styles';
@@ -20,7 +20,10 @@ import {
   TableContainer,
   TablePagination,
   FormControlLabel,
+  Typography
 } from '@mui/material';
+import { shallowEqual } from 'react-redux';
+import { useDispatch, useSelector } from '../../redux/store';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks
@@ -52,13 +55,14 @@ const SERVICE_OPTIONS = [
 ];
 
 const TABLE_HEAD = [
-  { id: 'invoiceNumber', label: 'Client', align: 'left' },
+  { id: 'organizationName', label :'Name', align: 'left' },
+  { id: 'adminName', label :'Admin', align: 'left' },
   { id: 'createDate', label: 'Create', align: 'left' },
-  { id: 'dueDate', label: 'Due', align: 'left' },
-  { id: 'price', label: 'Amount', align: 'center', width: 140 },
-  { id: 'sent', label: 'Sent', align: 'center', width: 140 },
-  { id: 'status', label: 'Status', align: 'left' },
-  { id: '' },
+  { id: 'users', label: 'Users', align: 'center' },
+  { id: 'projects', label: 'Projects', align: 'center', width: 140 },
+  { id: 'folders', label: 'Folders', align: 'center', width: 140 },
+  { id: 'files', label: 'Files', align: 'center' },
+  // { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -101,6 +105,91 @@ export default function InvoiceList() {
 
   const { currentTab: filterStatus, onChangeTab: onFilterStatus } = useTabs('all');
 
+  const state = useSelector((state) => state, shallowEqual);
+  const { organizations } = state?.organizations;
+  const { files } = state?.files;
+  const { folders } = state?.folders;
+  const { users } = state?.users;
+  const [organizationData, setOrganizationData] = useState([]);
+
+  console.log(organizations, users);
+
+  const newOrganization = [];
+  const newOrganization1 = [];
+  const newOrganization2 = [];
+  const newOrganization3 = [];
+  const newOrganization4 = [];
+  useEffect(() => {
+    // admin name
+    organizations.forEach((organization) => {
+      users.forEach((user) => {
+        if (organization?._id === user.orgId && user?.admin) {
+          newOrganization.push({ ...organization, userName: `${user?.firstName} ${user?.lastName}` });
+        }
+      });
+    });
+    // no of files
+    newOrganization.forEach((organization) => {
+      const sum = [];
+      files.forEach((file) => {
+        if (organization?._id === file.organization) {
+          sum.push(true);
+        }
+      });
+      // console.log('sum of files: ', sum);
+      newOrganization1.push({ ...organization, totalFiles: sum.length });
+    });
+    // console.log('new organization 1', newOrganization1);
+
+    // no of projects
+    newOrganization1.forEach((organization) => {
+      const sum = [];
+      folders.forEach((project) => {
+        if (project?.project && organization?._id === project.organization) {
+          sum.push(true);
+        }
+      });
+      // console.log('sum of files: ', sum);
+      newOrganization2.push({ ...organization, totalProjects: sum.length });
+    });
+    // console.log('new organization 2', newOrganization2);
+
+    // no of folders
+    newOrganization2.forEach((organization) => {
+      const sum = [];
+      folders.forEach((folder) => {
+        if (!folder?.project && organization?._id === folder.organization) {
+          sum.push(true);
+        }
+      });
+      // console.log('sum of files: ', sum);
+      newOrganization3.push({ ...organization, totalFolders: sum.length });
+    });
+    setOrganizationData(newOrganization3);
+    console.log('new organization 3', newOrganization3);
+
+    // no of users
+
+    newOrganization3.forEach((organization) => {
+      const sum = [];
+      users.forEach((user) => {
+        if (!user?.admin && organization?._id === user?.orgId) {
+          sum.push(true);
+        }
+      });
+      // console.log('sum of files: ', sum);
+      newOrganization4.push({ ...organization, totalUsers: sum.length });
+    });
+    setOrganizationData(newOrganization4);
+    console.log('new organization 4', newOrganization4);
+
+
+  }, []);
+
+  useEffect(() => {
+    console.log('new');
+  }, [newOrganization3]);
+
   const handleFilterName = (filterName) => {
     setFilterName(filterName);
     setPage(0);
@@ -131,7 +220,7 @@ export default function InvoiceList() {
   };
 
   const dataFiltered = applySortFilter({
-    tableData,
+    organizationData,
     comparator: getComparator(order, orderBy),
     filterName,
     filterService,
@@ -149,18 +238,18 @@ export default function InvoiceList() {
 
   const denseHeight = dense ? 56 : 76;
 
-  const getLengthByStatus = (status) => tableData.filter((item) => item.status === status).length;
+  const getLengthByStatus = (status) => organizationData.filter((item) => item.status === status).length;
 
   const getTotalPriceByStatus = (status) =>
     sumBy(
-      tableData.filter((item) => item.status === status),
+      organizationData.filter((item) => item.status === status),
       'totalPrice'
     );
 
-  const getPercentByStatus = (status) => (getLengthByStatus(status) / tableData.length) * 100;
+  const getPercentByStatus = (status) => (getLengthByStatus(status) / organizationData.length) * 100;
 
   const TABS = [
-    { value: 'all', label: 'All', color: 'info', count: tableData.length },
+    { value: 'all', label: 'All', color: 'info', count: organizationData.length },
     { value: 'paid', label: 'Paid', color: 'success', count: getLengthByStatus('paid') },
     { value: 'unpaid', label: 'Unpaid', color: 'warning', count: getLengthByStatus('unpaid') },
     { value: 'overdue', label: 'Overdue', color: 'error', count: getLengthByStatus('overdue') },
@@ -170,24 +259,9 @@ export default function InvoiceList() {
   return (
     <Page title="Invoice: List">
       <Container maxWidth={themeStretch ? false : 'lg'}>
-        <HeaderBreadcrumbs
-          heading="Invoice List"
-          links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
-            { name: 'Invoices', href: PATH_DASHBOARD.invoice.root },
-            { name: 'List' },
-          ]}
-          action={
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to={PATH_DASHBOARD.invoice.new}
-              startIcon={<Iconify icon={'eva:plus-fill'} />}
-            >
-              New Invoice
-            </Button>
-          }
-        />
+      <Typography variant="h4" sx={{ mb: 5 }}>
+          Organizations
+        </Typography>
 
         <Card sx={{ mb: 5 }}>
           <Scrollbar>
@@ -198,69 +272,21 @@ export default function InvoiceList() {
             >
               <InvoiceAnalytic
                 title="Total"
-                total={tableData.length}
+                total={organizationData.length}
                 percent={100}
-                price={sumBy(tableData, 'totalPrice')}
-                icon="ic:round-receipt"
+                price={sumBy(organizationData, 'totalPrice')}
+                icon="ic:round-square"
                 color={theme.palette.info.main}
               />
-              <InvoiceAnalytic
-                title="Paid"
-                total={getLengthByStatus('paid')}
-                percent={getPercentByStatus('paid')}
-                price={getTotalPriceByStatus('paid')}
-                icon="eva:checkmark-circle-2-fill"
-                color={theme.palette.success.main}
-              />
-              <InvoiceAnalytic
-                title="Unpaid"
-                total={getLengthByStatus('unpaid')}
-                percent={getPercentByStatus('unpaid')}
-                price={getTotalPriceByStatus('unpaid')}
-                icon="eva:clock-fill"
-                color={theme.palette.warning.main}
-              />
-              <InvoiceAnalytic
-                title="Overdue"
-                total={getLengthByStatus('overdue')}
-                percent={getPercentByStatus('overdue')}
-                price={getTotalPriceByStatus('overdue')}
-                icon="eva:bell-fill"
-                color={theme.palette.error.main}
-              />
-              <InvoiceAnalytic
-                title="Draft"
-                total={getLengthByStatus('draft')}
-                percent={getPercentByStatus('draft')}
-                price={getTotalPriceByStatus('draft')}
-                icon="eva:file-fill"
-                color={theme.palette.text.secondary}
-              />
+            
             </Stack>
           </Scrollbar>
         </Card>
 
         <Card>
-          <Tabs
-            allowScrollButtonsMobile
-            variant="scrollable"
-            scrollButtons="auto"
-            value={filterStatus}
-            onChange={onFilterStatus}
-            sx={{ px: 2, bgcolor: 'background.neutral' }}
-          >
-            {TABS.map((tab) => (
-              <Tab
-                disableRipple
-                key={tab.value}
-                value={tab.value}
-                icon={<Label color={tab.color}> {tab.count} </Label>}
-                label={tab.label}
-              />
-            ))}
-          </Tabs>
+       
 
-          <Divider />
+          {/* <Divider /> */}
 
           <InvoiceTableToolbar
             filterName={filterName}
@@ -276,6 +302,7 @@ export default function InvoiceList() {
               setFilterEndDate(newValue);
             }}
             optionsService={SERVICE_OPTIONS}
+            placeholder='Search organization'
           />
 
           <Scrollbar>
@@ -284,11 +311,11 @@ export default function InvoiceList() {
                 <TableSelectedActions
                   dense={dense}
                   numSelected={selected.length}
-                  rowCount={tableData.length}
+                  rowCount={organizationData.length}
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      organizationData.map((row) => row.id)
                     )
                   }
                   actions={
@@ -326,13 +353,13 @@ export default function InvoiceList() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
+                  rowCount={organizationData.length}
                   numSelected={selected.length}
                   onSort={onSort}
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      organizationData.map((row) => row.id)
                     )
                   }
                 />
@@ -340,7 +367,7 @@ export default function InvoiceList() {
                 <TableBody>
                   {dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                     <InvoiceTableRow
-                      key={row.id}
+                      key={row._id}
                       row={row}
                       selected={selected.includes(row.id)}
                       onSelectRow={() => onSelectRow(row.id)}
@@ -350,7 +377,7 @@ export default function InvoiceList() {
                     />
                   ))}
 
-                  <TableEmptyRows height={denseHeight} emptyRows={emptyRows(page, rowsPerPage, tableData.length)} />
+                  <TableEmptyRows height={denseHeight} emptyRows={emptyRows(page, rowsPerPage, organizationData.length)} />
 
                   <TableNoData isNotFound={isNotFound} />
                 </TableBody>
@@ -384,7 +411,7 @@ export default function InvoiceList() {
 // ----------------------------------------------------------------------
 
 function applySortFilter({
-  tableData,
+  organizationData,
   comparator,
   filterName,
   filterStatus,
@@ -392,7 +419,7 @@ function applySortFilter({
   filterStartDate,
   filterEndDate,
 }) {
-  const stabilizedThis = tableData.map((el, index) => [el, index]);
+  const stabilizedThis =organizationData.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -400,30 +427,30 @@ function applySortFilter({
     return a[1] - b[1];
   });
 
-  tableData = stabilizedThis.map((el) => el[0]);
+  organizationData = stabilizedThis.map((el) => el[0]);
 
   if (filterName) {
-    tableData = tableData.filter(
-      (item) =>
-        item.invoiceNumber.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.invoiceTo.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+    organizationData = organizationData.filter(
+      (organization) =>
+      organization.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+      organization.userName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }
 
   if (filterStatus !== 'all') {
-    tableData = tableData.filter((item) => item.status === filterStatus);
+    organizationData = organizationData.filter((item) => item.status === filterStatus);
   }
 
   if (filterService !== 'all') {
-    tableData = tableData.filter((item) => item.items.some((c) => c.service === filterService));
+    organizationData = organizationData.filter((item) => item.items.some((c) => c.service === filterService));
   }
 
   if (filterStartDate && filterEndDate) {
-    tableData = tableData.filter(
+    organizationData = organizationData.filter(
       (item) =>
         item.createDate.getTime() >= filterStartDate.getTime() && item.createDate.getTime() <= filterEndDate.getTime()
     );
   }
 
-  return tableData;
+  return organizationData;
 }

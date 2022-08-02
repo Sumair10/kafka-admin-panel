@@ -30,10 +30,11 @@ export default function InvoiceTableToolbar({
   onFilterService,
   onFilterStartDate,
   onFilterEndDate,
+  placeholder
 }) {
   return (
     <Stack spacing={2} direction={{ xs: 'column', md: 'row' }} sx={{ py: 2.5, px: 3 }}>
-      <TextField
+      {/* <TextField
         fullWidth
         select
         label="Service type"
@@ -64,9 +65,9 @@ export default function InvoiceTableToolbar({
             {option}
           </MenuItem>
         ))}
-      </TextField>
+      </TextField> */}
 
-      <DatePicker
+      {/* <DatePicker
         label="Start date"
         value={filterStartDate}
         onChange={onFilterStartDate}
@@ -79,9 +80,9 @@ export default function InvoiceTableToolbar({
             }}
           />
         )}
-      />
+      /> */}
 
-      <DatePicker
+      {/* <DatePicker
         label="End date"
         value={filterEndDate}
         onChange={onFilterEndDate}
@@ -94,13 +95,13 @@ export default function InvoiceTableToolbar({
             }}
           />
         )}
-      />
+      /> */}
 
       <TextField
         fullWidth
         value={filterName}
         onChange={(event) => onFilterName(event.target.value)}
-        placeholder="Search client or invoice number..."
+        placeholder={placeholder}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
