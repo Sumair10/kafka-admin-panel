@@ -263,11 +263,12 @@ export default function GeneralBanking() {
     { value: 'draft', label: 'Draft', color: 'default', count: getLengthByStatus('draft') },
   ];
 
+
   return (
     <Page title="Invoice: List">
       <Container maxWidth="100%">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Projects
+          Project
         </Typography>
 
         <Card sx={{ mb: 5 }}>
