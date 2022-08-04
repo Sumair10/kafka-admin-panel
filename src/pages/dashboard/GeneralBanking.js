@@ -267,7 +267,146 @@ export default function GeneralBanking() {
   return (
     <Page title="Invoice: List">
       <Container maxWidth="100%">
-       hello
+        <Typography variant="h4" sx={{ mb: 5 }}>
+          Projects
+        </Typography>
+
+        <Card sx={{ mb: 5 }}>
+          <Scrollbar>
+            <Stack
+              direction="row"
+              divider={<Divider orientation="vertical" flexItem sx={{ borderStyle: 'dashed' }} />}
+              sx={{ py: 2 }}
+            >
+              <InvoiceAnalytic
+                title="Total"
+                name="projects"
+                total={projectssData.length}
+                percent={100}
+                price={sumBy(projectssData, 'totalPrice')}
+                icon="ic:round-square"
+                color={theme.palette.info.main}
+              />
+            </Stack>
+          </Scrollbar>
+        </Card>
+
+        <Card>
+          <InvoiceTableToolbar
+            filterName={filterName}
+            filterService={filterService}
+            filterStartDate={filterStartDate}
+            filterEndDate={filterEndDate}
+            onFilterName={handleFilterName}
+            onFilterService={handleFilterService}
+            onFilterStartDate={(newValue) => {
+              setFilterStartDate(newValue);
+            }}
+            onFilterEndDate={(newValue) => {
+              setFilterEndDate(newValue);
+            }}
+            optionsService={SERVICE_OPTIONS}
+            placeholder="Search project"
+          />
+
+          <Scrollbar>
+            <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
+              {selected.length > 0 && (
+                <TableSelectedActions
+                  dense={dense}
+                  numSelected={selected.length}
+                  rowCount={projectssData.length}
+                  onSelectAllRows={(checked) =>
+                    onSelectAllRows(
+                      checked,
+                      projectssData.map((row) => row.id)
+                    )
+                  }
+                  actions={
+                    <Stack spacing={1} direction="row">
+                      <Tooltip title="Sent">
+                        <IconButton color="primary">
+                          <Iconify icon={'ic:round-send'} />
+                        </IconButton>
+                      </Tooltip>
+
+                      <Tooltip title="Download">
+                        <IconButton color="primary">
+                          <Iconify icon={'eva:download-outline'} />
+                        </IconButton>
+                      </Tooltip>
+
+                      <Tooltip title="Print">
+                        <IconButton color="primary">
+                          <Iconify icon={'eva:printer-fill'} />
+                        </IconButton>
+                      </Tooltip>
+
+                      <Tooltip title="Delete">
+                        <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
+                          <Iconify icon={'eva:trash-2-outline'} />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
+                  }
+                />
+              )}
+
+              <Table size={dense ? 'small' : 'medium'}>
+                <TableHeadCustom
+                  order={order}
+                  orderBy={orderBy}
+                  headLabel={TABLE_HEAD}
+                  rowCount={projectssData.length}
+                  numSelected={selected.length}
+                  onSort={onSort}
+                  onSelectAllRows={(checked) =>
+                    onSelectAllRows(
+                      checked,
+                      projectssData.map((row) => row.id)
+                    )
+                  }
+                />
+
+                <TableBody>
+                  {dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                    <InvoiceTableRowProjects
+                      key={row._id}
+                      row={row}
+                      selected={selected.includes(row.id)}
+                      onSelectRow={() => onSelectRow(row.id)}
+                      onViewRow={() => handleViewRow(row.id)}
+                      onEditRow={() => handleEditRow(row.id)}
+                      onDeleteRow={() => handleDeleteRow(row.id)}
+                    />
+                  ))}
+
+                  <TableEmptyRows height={denseHeight} emptyRows={emptyRows(page, rowsPerPage, projectssData.length)} />
+
+                  <TableNoData isNotFound={isNotFound} />
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Scrollbar>
+
+          <Box sx={{ position: 'relative' }}>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={dataFiltered.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={onChangePage}
+              onRowsPerPageChange={onChangeRowsPerPage}
+            />
+
+            <FormControlLabel
+              control={<Switch checked={dense} onChange={onChangeDense} />}
+              label="Dense"
+              sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
+            />
+          </Box>
+        </Card>
       </Container>
     </Page>
   );
