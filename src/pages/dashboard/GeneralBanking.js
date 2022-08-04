@@ -263,7 +263,6 @@ export default function GeneralBanking() {
     { value: 'draft', label: 'Draft', color: 'default', count: getLengthByStatus('draft') },
   ];
 
-
   return (
     <Page title="Invoice: List">
       <Container maxWidth="100%">
