@@ -268,7 +268,7 @@ export default function GeneralBanking() {
     <Page title="Invoice: List">
       <Container maxWidth="100%">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Project
+          Projects
         </Typography>
 
         <Card sx={{ mb: 5 }}>
