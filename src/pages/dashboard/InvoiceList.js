@@ -61,7 +61,9 @@ const TABLE_HEAD = [
   { id: 'users', label: 'Users', align: 'center' },
   { id: 'projects', label: 'Projects', align: 'center', width: 140 },
   { id: 'folders', label: 'Folders', align: 'center', width: 140 },
-  { id: 'files', label: 'Files', align: 'center' },
+  { id: 'files', label: 'All files', align: 'center' },
+  { id: 'processedfiles', label: 'Processed files', align: 'center' },
+  // { id: 'files', label: 'Files', align: 'center' },
   // { id: '' },
 ];
 
@@ -119,6 +121,7 @@ export default function InvoiceList() {
   const newOrganization2 = [];
   const newOrganization3 = [];
   const newOrganization4 = [];
+  const newOrganization5 = [];
   useEffect(() => {
     // admin name
     organizations.forEach((organization) => {
@@ -180,8 +183,22 @@ export default function InvoiceList() {
       // console.log('sum of files: ', sum);
       newOrganization4.push({ ...organization, totalUsers: sum.length });
     });
-    setOrganizationData(newOrganization4);
-    console.log('new organization 4', newOrganization4);
+
+
+    // processed files
+    newOrganization4.forEach((organization) => {
+      const sum = [];
+      files.forEach((file) => {
+        if ( organization._id === file.organization && file?.processed_data ) {
+          sum.push(true);
+        }
+      });
+      // console.log('sum of files: ', sum);
+      newOrganization5.push({ ...organization, processedFiles: sum.length });
+    });
+    
+    setOrganizationData(newOrganization5);
+    console.log('new organization 5', newOrganization5);
 
 
   }, []);
@@ -258,7 +275,7 @@ export default function InvoiceList() {
 
   return (
     <Page title="Invoice: List">
-      <Container maxWidth={themeStretch ? false : 'lg'}>
+      <Container maxWidth="100%">
       <Typography variant="h4" sx={{ mb: 5 }}>
           Organizations
         </Typography>
@@ -272,6 +289,7 @@ export default function InvoiceList() {
             >
               <InvoiceAnalytic
                 title="Total"
+                name="organizations"
                 total={organizationData.length}
                 percent={100}
                 price={sumBy(organizationData, 'totalPrice')}
