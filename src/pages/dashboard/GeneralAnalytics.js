@@ -7,11 +7,11 @@ import { shallowEqual } from 'react-redux';
 import useSettings from '../../hooks/useSettings';
 // _mock_
 import { _analyticPost, _analyticOrderTimeline, _analyticTraffic } from '../../_mock';
-import { useDispatch, useSelector  } from '../../redux/store';
+import { useDispatch, useSelector } from '../../redux/store';
 import { getOrganizations } from '../../redux/slices/organizations';
 import { getFiles } from '../../redux/slices/files';
 import { getFolders } from '../../redux/slices/folders';
-import { getUsers  } from '../../redux/slices/users';
+import { getUsers } from '../../redux/slices/users';
 // components
 import Page from '../../components/Page';
 // sections
@@ -38,7 +38,7 @@ export default function GeneralAnalytics() {
   const { files } = state?.files;
   const { folders } = state?.folders;
   const { users } = state?.users;
- 
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -46,8 +46,22 @@ export default function GeneralAnalytics() {
     dispatch(getUsers());
     dispatch(getFolders());
     dispatch(getFiles());
-  console.log(organizations , files , folders , users)
-}, []);
+    console.log(organizations, files, folders, users);
+  }, []);
+
+  const [hit, setHit] = useState(false)
+  const nanoNetHits = [];
+  useEffect(() => {
+    // admins
+    files.forEach((file) => {
+      if (file.nanoNet_hit) {
+        nanoNetHits.push(true);
+      }
+    });
+    console.log('1.', nanoNetHits);
+    setHit(nanoNetHits.length)
+  }, [files]);
+
   return (
     <Page title="General: Analytics">
       <Container maxWidth={themeStretch ? false : 'xl'}>
@@ -57,7 +71,11 @@ export default function GeneralAnalytics() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AnalyticsWidgetSummary title="Organizations" total={organizations.length} icon={'ant-design:build-filled'} />
+            <AnalyticsWidgetSummary
+              title="Organizations"
+              total={organizations.length}
+              icon={'ant-design:build-filled'}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
@@ -75,6 +93,11 @@ export default function GeneralAnalytics() {
 
           <Grid item xs={12} sm={6} md={3}>
             <AnalyticsWidgetSummary title="Files" total={files.length} color="error" icon={'ant-design:file-filled'} />
+          </Grid>
+          
+
+          <Grid item xs={12} sm={6} md={3}>
+            <AnalyticsWidgetSummary title="Hits" total={ hit} color="success" icon={'ant-design:file-filled'} />
           </Grid>
 
           {/* <Grid item xs={12} md={6} lg={8}>

@@ -182,9 +182,9 @@ export default function GeneralBanking() {
     newProjects3.forEach((project) => {
       users.forEach((user) => {
         if (user._id === project?.created_by) {
-          const  dates = new Date(project?.created_at )
-          const a = `${dates.getDate()} ${dates.getTime()}`
-          newProjects4.push({ ...project, createdBy: `${user?.firstName} ${user?.lastName}`, createdAt : a});
+          const dates = new Date(project?.created_at);
+          const a = `${dates.getDate()} ${dates.getTime()}`;
+          newProjects4.push({ ...project, createdBy: `${user?.firstName} ${user?.lastName}`, createdAt: a });
         }
       });
     });
