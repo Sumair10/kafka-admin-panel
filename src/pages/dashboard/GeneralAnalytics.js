@@ -49,10 +49,15 @@ export default function GeneralAnalytics() {
     console.log(organizations, files, folders, users);
   }, []);
 
-  const [hit, setHit] = useState(false)
+  const [hit, setHit] = useState()
+  const [admins, setAdmins] = useState()
+  const [adminUsers, setAdminUsers] = useState()
   const nanoNetHits = [];
+  const a = [];
+  const b = [];
+ 
   useEffect(() => {
-    // admins
+    // nanonet hits
     files.forEach((file) => {
       if (file.nanoNet_hit) {
         nanoNetHits.push(true);
@@ -60,6 +65,24 @@ export default function GeneralAnalytics() {
     });
     console.log('1.', nanoNetHits);
     setHit(nanoNetHits.length)
+
+    // admins
+
+    users.forEach((user) => {
+      if (user?.admin) {
+        a.push(true);
+      }
+    });
+    setAdmins(a.length)
+
+    // users
+    users.forEach((user) => {
+      if (!user?.admin) {
+        b.push(true);
+      }
+    });
+    setAdminUsers(b.length)
+
   }, [files]);
 
   return (
@@ -79,14 +102,19 @@ export default function GeneralAnalytics() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AnalyticsWidgetSummary title="Users" total={users.length} color="info" icon={'ant-design:user-outlined'} />
+          
+            <AnalyticsWidgetSummary title="Admins" total={  admins } color="info" icon={'ant-design:user-outlined'} />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <AnalyticsWidgetSummary title="Users" total={adminUsers} color="warning" icon={'ant-design:user-outlined'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
             <AnalyticsWidgetSummary
               title="Folders"
               total={folders.length}
-              color="warning"
+              color="secondary"
               icon={'ant-design:folder-filled'}
             />
           </Grid>
@@ -97,7 +125,7 @@ export default function GeneralAnalytics() {
           
 
           <Grid item xs={12} sm={6} md={3}>
-            <AnalyticsWidgetSummary title="Hits" total={ hit} color="success" icon={'ant-design:file-filled'} />
+            <AnalyticsWidgetSummary title="Hits" total={ hit} color="success" icon={'ant-design:send-outlined'} />
           </Grid>
 
           {/* <Grid item xs={12} md={6} lg={8}>

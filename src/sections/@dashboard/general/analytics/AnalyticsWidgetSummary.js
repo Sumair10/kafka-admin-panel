@@ -2,6 +2,8 @@
 import PropTypes from 'prop-types';
 import { alpha, styled } from '@mui/material/styles';
 import { Card, Typography } from '@mui/material';
+
+import { HomeOutlined, LoadingOutlined, SettingFilled, SmileOutlined, SyncOutlined } from '@ant-design/icons';
 // utils
 import { fShortenNumber } from '../../../../utils/formatNumber';
 // components
@@ -55,8 +57,11 @@ export default function AnalyticsWidgetSummary({ title, total, icon, color = 'pr
       >
         <Iconify icon={icon} width={24} height={24} />
       </IconWrapperStyle>
-
-      <Typography variant="h3">{fShortenNumber(total)}</Typography>
+      {total === 0 ? (
+        <LoadingOutlined style={{ fontSize: 24 , paddingBottom:10 , paddingTop:10 }} />
+        ) : (
+          <Typography variant="h3">{fShortenNumber(total)}</Typography>
+      )}
 
       <Typography variant="subtitle2" sx={{ opacity: 0.72 }}>
         {title}

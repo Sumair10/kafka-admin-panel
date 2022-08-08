@@ -293,8 +293,8 @@ export default function InvoiceList() {
                 total={organizationData.length}
                 percent={100}
                 price={sumBy(organizationData, 'totalPrice')}
-                icon="ic:round-square"
-                color={theme.palette.info.main}
+                icon="fa-solid:building"
+                color={theme.palette.primary.main}
               />
             
             </Stack>

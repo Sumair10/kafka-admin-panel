@@ -6,6 +6,7 @@ import { Box, Stack, AppBar, Toolbar } from '@mui/material';
 import useOffSetTop from '../../../hooks/useOffSetTop';
 import useResponsive from '../../../hooks/useResponsive';
 // utils
+import SettingMode from '../../../components/settings/drawer/SettingMode';
 import cssStyles from '../../../utils/cssStyles';
 // config
 import { HEADER, NAVBAR } from '../../../config';
@@ -82,9 +83,10 @@ export default function DashboardHeader({ onOpenSidebar, isCollapse = false, ver
         <Box sx={{ flexGrow: 1 }} />
 
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
+          <SettingMode />
           <LanguagePopover />
-          <NotificationsPopover />
-          <ContactsPopover />
+          {/* <NotificationsPopover /> */}
+          {/* <ContactsPopover /> */}
           <AccountPopover />
         </Stack>
       </Toolbar>

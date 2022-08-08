@@ -183,7 +183,8 @@ export default function GeneralBanking() {
       users.forEach((user) => {
         if (user._id === project?.created_by) {
           const dates = new Date(project?.created_at);
-          const a = `${dates.getDate()} ${dates.getTime()}`;
+          const a = `${dates.getMonth()}-${dates.getDate()}-${dates.getFullYear()}`;
+          console.log(a);
           newProjects4.push({ ...project, createdBy: `${user?.firstName} ${user?.lastName}`, createdAt: a });
         }
       });
@@ -283,8 +284,8 @@ export default function GeneralBanking() {
                 total={projectssData.length}
                 percent={100}
                 price={sumBy(projectssData, 'totalPrice')}
-                icon="ic:round-square"
-                color={theme.palette.info.main}
+                icon="ri:folders-fill"
+                color={theme.palette.secondary.main}
               />
             </Stack>
           </Scrollbar>

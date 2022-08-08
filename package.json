@@ -37,6 +37,7 @@
     ]
   },
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@auth0/auth0-spa-js": "^1.21.0",
     "@emotion/cache": "^11.7.1",
     "@emotion/react": "^11.9.0",

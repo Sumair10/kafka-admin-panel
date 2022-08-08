@@ -121,7 +121,7 @@ export default function GeneralBooking() {
   const newAdmins4 = [];
 
   useEffect(() => {
-    // admins
+    // users
     users.forEach((user) => {
       if (!user?.admin) {
         admins.push({ ...user });
@@ -285,8 +285,8 @@ setAdminData(newAdmins4);
                 total={adminData.length}
                 percent={100}
                 price={sumBy(adminData, 'totalPrice')}
-                icon="ic:round-square"
-                color={theme.palette.info.main}
+                icon="icomoon-free:users"
+                color={theme.palette.warning.main}
               />
             
             </Stack>

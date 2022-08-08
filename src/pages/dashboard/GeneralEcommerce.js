@@ -287,7 +287,7 @@ export default function GeneralEcommerce() {
                 total={adminData.length}
                 percent={100}
                 price={sumBy(adminData, 'totalPrice')}
-                icon="ic:round-square"
+                icon="clarity:users-solid"
                 color={theme.palette.info.main}
               />
             </Stack>
